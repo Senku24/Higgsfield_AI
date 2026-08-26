@@ -1,0 +1,59 @@
+// use prisma-next
+
+model User {
+    id              String      @id     @default(uuid())
+    username        String      @unique
+    password        String
+    avatars         Avatar[]
+    avatarVideos    AvatarVideo[]
+}
+model Avatar {
+    id                          String      @id     @default(uuid())
+    userId                      String
+    name                        String
+    avatarImages                AvatarImage[]
+    avatarVideoReferences       AvatarVideoReference[]
+    user                        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+model AvatarImage {
+    id          String      @id     @default(uuid())
+    avatarId    String
+    type        AvatarImageType
+    url         String
+    avatar      Avatar      @relation(fields: [avatarId], references: [id], onDelete: Cascade)
+}
+
+enum AvatarImageType {
+    User
+    Model
+}
+
+model AvatarVideo {
+    id                          String      @id     @default(uuid())
+    userId                      String
+    prompt                      String
+    startFrame                  String?
+    endFrame                    String?
+    duration                    Int
+    width                       Int
+    height                      Int
+    status                      AvatarVideoStatus
+    avatarVideoReferences       AvatarVideoReference[]
+    user                        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum AvatarVideoStatus{
+    Pending
+    Done
+    Error
+}
+
+model AvatarVideoReference {
+    id                  String           @id     @default(uuid())
+    avatarVideoId       String
+    avatarId            String 
+    avatar              Avatar           @relation(fields: [avatarId], references: [id])
+    avatarVideo         AvatarVideo      @relation(fields: [avatarVideoId], references: [id], onDelete: Cascade)
+
+    @@unique([avatarVideoId, avatarId])
+}

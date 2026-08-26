@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "type": "module",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts",
+    "postinstall": "prisma skills sync || exit 0",
+    "contract:emit": "prisma contract emit"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "@prisma/orm-postgres": "^8.0.0-rc.7",
+    "@types/express": "^5.0.6",
+    "dotenv": "^17.4.2",
+    "elysia": "latest",
+    "express": "^5.2.1",
+    "pg": "^8.23.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@prisma/cli-engine": "0.2.3",
+    "@types/node": "^26.3.0",
+    "@types/pg": "^8.23.1",
+    "bun-types": "latest",
+    "prisma": "^8.0.0-rc.10"
+  },
+  "module": "src/index.js"
+}
