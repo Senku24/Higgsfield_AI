@@ -17,6 +17,7 @@
     "elysia": "latest",
     "express": "^5.2.1",
     "pg": "^8.23.0",
+    "uuidv4": "^6.2.13",
     "zod": "^4.4.3"
   },
   "devDependencies": {

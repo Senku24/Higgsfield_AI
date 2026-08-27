@@ -1,8 +1,10 @@
 import express from "express";
-import fs from "fs";
+import { uuid } from "uuidv4";
 import bcrypt from "bcrypt";
 import { db } from "./prisma/db";
 import { CreateUserSchema, CreateAvatarSchema } from "./tyoes"
+import { createImage } from "./image";
+import { generateVideo } from "./video";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import dotenv from "dotenv";
@@ -72,37 +74,21 @@ app.post("/api/v1/avatar", authMiddleware, async (req, res) => {
     });
     return;
   }
-  
-  const imagePath = "path/to/cat_image.png";
-  const imageData = fs.readFileSync(imagePath);
-  const base64Image = imageData.toString("base64");
+  const leftProfileId = uuid();
+  const rightProfileId = uuid();
+  const frontProfileId = uuid();
+  await Promise.all([
+    createImage("create a left profile of user given the image, it should be a profile headshot", data.image, `./assets/${leftProfileId}.png`),
+    createImage("create a right profile of user given the image, it should be a profile headshot", data.image, `./assets/${rightProfileId}.png`),
+    createImage("create a front profile of user given the image, it should be a profile headshot", data.image, `./assets/${frontProfileId}.png`)
+  ]);
+  // put in s3 bucket then save the urls in the database.
 
-  const prompt = [
-    { type: "text", text: "Create a picture of my cat eating a nano-banana in a" +
-            "fancy restaurant under the Gemini constellation" },
-    {
-      type: "image",
-      mime_type: "image/png",
-      data: base64Image
-    },
-  ];
+});
 
-  const interaction = await ai.interactions.create({
-    model: "gemini-3.1-flash-image",
-    input: prompt,
-  });
-  const generatedImage = interaction.output_image;
-  if (generatedImage) {
-    const buffer = Buffer.from(generatedImage.data, "base64");
-    fs.writeFileSync("gemini-native-image.png", buffer);
-    console.log("Image saved as gemini-native-image.png");
-  }
-}
-
-);
-
-app.post("/api/v1/video", authMiddleware, (req, res) => {
-
+app.post("/api/v1/video", authMiddleware, async (req, res) => {
+  generateVideo("The video opens with a medium, eye-level shot of a beautiful man with dark hair and warm brown eyes.he wears a magnificent, high-fashion flamingo dress with layers of pink and fuchsia feathers, complemented by whimsical pink, heart-shaped sunglasses.he walks with serene confidence through the crystal-clear, shallow turquoise water of a sun-drenched lagoon. The camera slowly pulls back to a medium-wide shot, revealing the breathtaking scene as the dress's long train glides and floats gracefully on the water's surface behind him. The cinematic, dreamlike atmosphere is enhanced by the vibrant colors of the dress against the serene, minimalist landscape, capturing a moment of pure elegance and high-fashion fantasy",
+     ["./assets/leftProfile.png", "./assets/rightProfile.png", "./assets/frontProfile.png"], "./outputs/video.mp4");
 });
 
 app.get("/api/v1/videos", (req, res) => {

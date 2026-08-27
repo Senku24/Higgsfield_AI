@@ -15,7 +15,7 @@ declare global {
 }
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.body.token;
+    const token = req.headers.token as string | undefined;
     if (!token) {
         return res.status(401).json({ message: "Access denied" });
     }
