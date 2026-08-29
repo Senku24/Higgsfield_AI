@@ -10,8 +10,8 @@ import { LandingPage } from "./pages/Landing";
 export function App() {
   return (
     <div>
-      <Appbar />
       <BrowserRouter>
+      <Appbar />
         <Routes>
           <Route path= "/" element= {<LandingPage />}/>
           <Route path= "/signup" element= {<Signup />}/>
