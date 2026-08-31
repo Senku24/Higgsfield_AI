@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors"
 import { uuid } from "uuidv4";
 import bcrypt from "bcrypt";
 import { db } from "./prisma/db";
@@ -14,6 +15,7 @@ import { GoogleGenAI } from "@google/genai";
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 const ai = new GoogleGenAI({

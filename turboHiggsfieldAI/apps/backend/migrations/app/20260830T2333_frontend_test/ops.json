@@ -1,0 +1,703 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.avatar",
+    "label": "Create table \"avatar\"",
+    "summary": "Creates table \"avatar\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "avatar"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"avatar\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatar\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"avatar\"",
+        "sql": "CREATE TABLE \"public\".\"avatar\" (\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"avatar\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatar\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.avatarImage",
+    "label": "Create table \"avatarImage\"",
+    "summary": "Creates table \"avatarImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "avatarImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"avatarImage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"avatarImage\"",
+        "sql": "CREATE TABLE \"public\".\"avatarImage\" (\n  \"avatarId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"type\" text NOT NULL,\n  \"url\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"avatarImage_type_check_7e4b911f\" CHECK (\"type\" IN ('User', 'Model'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"avatarImage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.avatarVideo",
+    "label": "Create table \"avatarVideo\"",
+    "summary": "Creates table \"avatarVideo\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "avatarVideo"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"avatarVideo\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideo\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"avatarVideo\"",
+        "sql": "CREATE TABLE \"public\".\"avatarVideo\" (\n  \"duration\" int4 NOT NULL,\n  \"endFrame\" text,\n  \"height\" int4 NOT NULL,\n  \"id\" text NOT NULL,\n  \"prompt\" text NOT NULL,\n  \"startFrame\" text,\n  \"status\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  \"width\" int4 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"avatarVideo_status_check_e5c75c8b\" CHECK (\"status\" IN ('Pending', 'Done', 'Error'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"avatarVideo\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideo\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.avatarVideoReference",
+    "label": "Create table \"avatarVideoReference\"",
+    "summary": "Creates table \"avatarVideoReference\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "avatarVideoReference"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"avatarVideoReference\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideoReference\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"avatarVideoReference\"",
+        "sql": "CREATE TABLE \"public\".\"avatarVideoReference\" (\n  \"avatarId\" text NOT NULL,\n  \"avatarVideoId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"avatarVideoReference\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideoReference\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.user",
+    "label": "Create table \"user\"",
+    "summary": "Creates table \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"user\"",
+        "sql": "CREATE TABLE \"public\".\"user\" (\n  \"id\" text NOT NULL,\n  \"password\" text NOT NULL,\n  \"username\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.avatarVideoReference.avatarVideoReference_avatarVideoId_avatarId_key",
+    "label": "Add unique constraint on \"avatarVideoReference\" (avatarVideoId, avatarId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "avatarVideoReference_avatarVideoId_avatarId_key",
+        "table": "avatarVideoReference"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"avatarVideoReference_avatarVideoId_avatarId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarVideoReference_avatarVideoId_avatarId_key",
+          "public",
+          "\"public\".\"avatarVideoReference\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"avatarVideoReference_avatarVideoId_avatarId_key\"",
+        "sql": "ALTER TABLE \"public\".\"avatarVideoReference\" ADD CONSTRAINT \"avatarVideoReference_avatarVideoId_avatarId_key\" UNIQUE (\"avatarVideoId\", \"avatarId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"avatarVideoReference_avatarVideoId_avatarId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarVideoReference_avatarVideoId_avatarId_key",
+          "public",
+          "\"public\".\"avatarVideoReference\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_username_key",
+    "label": "Add unique constraint on \"user\" (username)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_username_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_username_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_username_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_username_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_username_key\" UNIQUE (\"username\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_username_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_username_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.avatar.avatar_userId_idx_a489d58a",
+    "label": "Create index \"avatar_userId_idx_a489d58a\" on \"avatar\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "avatar_userId_idx_a489d58a",
+        "table": "avatar"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"avatar_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatar_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"avatar_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"avatar_userId_idx_a489d58a\" ON \"public\".\"avatar\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"avatar_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatar_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.avatarImage.avatarImage_avatarId_idx_14b51a84",
+    "label": "Create index \"avatarImage_avatarId_idx_14b51a84\" on \"avatarImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "avatarImage_avatarId_idx_14b51a84",
+        "table": "avatarImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"avatarImage_avatarId_idx_14b51a84\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarImage_avatarId_idx_14b51a84\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"avatarImage_avatarId_idx_14b51a84\"",
+        "sql": "CREATE INDEX \"avatarImage_avatarId_idx_14b51a84\" ON \"public\".\"avatarImage\" (\"avatarId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"avatarImage_avatarId_idx_14b51a84\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarImage_avatarId_idx_14b51a84\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.avatarVideo.avatarVideo_userId_idx_a489d58a",
+    "label": "Create index \"avatarVideo_userId_idx_a489d58a\" on \"avatarVideo\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "avatarVideo_userId_idx_a489d58a",
+        "table": "avatarVideo"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"avatarVideo_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideo_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"avatarVideo_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"avatarVideo_userId_idx_a489d58a\" ON \"public\".\"avatarVideo\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"avatarVideo_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideo_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.avatarVideoReference.avatarVideoReference_avatarId_idx_14b51a84",
+    "label": "Create index \"avatarVideoReference_avatarId_idx_14b51a84\" on \"avatarVideoReference\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "avatarVideoReference_avatarId_idx_14b51a84",
+        "table": "avatarVideoReference"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"avatarVideoReference_avatarId_idx_14b51a84\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideoReference_avatarId_idx_14b51a84\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"avatarVideoReference_avatarId_idx_14b51a84\"",
+        "sql": "CREATE INDEX \"avatarVideoReference_avatarId_idx_14b51a84\" ON \"public\".\"avatarVideoReference\" (\"avatarId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"avatarVideoReference_avatarId_idx_14b51a84\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideoReference_avatarId_idx_14b51a84\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.avatarVideoReference.avatarVideoReference_avatarVideoId_idx_f4e58f10",
+    "label": "Create index \"avatarVideoReference_avatarVideoId_idx_f4e58f10\" on \"avatarVideoReference\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "avatarVideoReference_avatarVideoId_idx_f4e58f10",
+        "table": "avatarVideoReference"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"avatarVideoReference_avatarVideoId_idx_f4e58f10\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideoReference_avatarVideoId_idx_f4e58f10\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"avatarVideoReference_avatarVideoId_idx_f4e58f10\"",
+        "sql": "CREATE INDEX \"avatarVideoReference_avatarVideoId_idx_f4e58f10\" ON \"public\".\"avatarVideoReference\" (\"avatarVideoId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"avatarVideoReference_avatarVideoId_idx_f4e58f10\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"avatarVideoReference_avatarVideoId_idx_f4e58f10\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.avatar.avatar_userId_fkey",
+    "label": "Add foreign key \"avatar_userId_fkey\" on \"avatar\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "avatar_userId_fkey",
+        "table": "avatar"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"avatar_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatar_userId_fkey",
+          "public",
+          "\"public\".\"avatar\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"avatar_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"avatar\"\nADD CONSTRAINT \"avatar_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"avatar_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatar_userId_fkey",
+          "public",
+          "\"public\".\"avatar\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.avatarImage.avatarImage_avatarId_fkey",
+    "label": "Add foreign key \"avatarImage_avatarId_fkey\" on \"avatarImage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "avatarImage_avatarId_fkey",
+        "table": "avatarImage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"avatarImage_avatarId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarImage_avatarId_fkey",
+          "public",
+          "\"public\".\"avatarImage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"avatarImage_avatarId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"avatarImage\"\nADD CONSTRAINT \"avatarImage_avatarId_fkey\"\nFOREIGN KEY (\"avatarId\")\nREFERENCES \"public\".\"avatar\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"avatarImage_avatarId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarImage_avatarId_fkey",
+          "public",
+          "\"public\".\"avatarImage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.avatarVideo.avatarVideo_userId_fkey",
+    "label": "Add foreign key \"avatarVideo_userId_fkey\" on \"avatarVideo\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "avatarVideo_userId_fkey",
+        "table": "avatarVideo"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"avatarVideo_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarVideo_userId_fkey",
+          "public",
+          "\"public\".\"avatarVideo\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"avatarVideo_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"avatarVideo\"\nADD CONSTRAINT \"avatarVideo_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"avatarVideo_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarVideo_userId_fkey",
+          "public",
+          "\"public\".\"avatarVideo\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.avatarVideoReference.avatarVideoReference_avatarId_fkey",
+    "label": "Add foreign key \"avatarVideoReference_avatarId_fkey\" on \"avatarVideoReference\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "avatarVideoReference_avatarId_fkey",
+        "table": "avatarVideoReference"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"avatarVideoReference_avatarId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarVideoReference_avatarId_fkey",
+          "public",
+          "\"public\".\"avatarVideoReference\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"avatarVideoReference_avatarId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"avatarVideoReference\"\nADD CONSTRAINT \"avatarVideoReference_avatarId_fkey\"\nFOREIGN KEY (\"avatarId\")\nREFERENCES \"public\".\"avatar\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"avatarVideoReference_avatarId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarVideoReference_avatarId_fkey",
+          "public",
+          "\"public\".\"avatarVideoReference\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.avatarVideoReference.avatarVideoReference_avatarVideoId_fkey",
+    "label": "Add foreign key \"avatarVideoReference_avatarVideoId_fkey\" on \"avatarVideoReference\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "avatarVideoReference_avatarVideoId_fkey",
+        "table": "avatarVideoReference"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"avatarVideoReference_avatarVideoId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarVideoReference_avatarVideoId_fkey",
+          "public",
+          "\"public\".\"avatarVideoReference\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"avatarVideoReference_avatarVideoId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"avatarVideoReference\"\nADD CONSTRAINT \"avatarVideoReference_avatarVideoId_fkey\"\nFOREIGN KEY (\"avatarVideoId\")\nREFERENCES \"public\".\"avatarVideo\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"avatarVideoReference_avatarVideoId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "avatarVideoReference_avatarVideoId_fkey",
+          "public",
+          "\"public\".\"avatarVideoReference\""
+        ]
+      }
+    ]
+  }
+]
