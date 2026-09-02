@@ -1,159 +1,114 @@
-# Turborepo starter
+# Higgsfield
 
-This Turborepo starter is maintained by the Turborepo core team.
+Avatar and video generation platform. Create personalized avatars from selfies and generate videos with them.
 
-## Using this example
+## Tech Stack
 
-Run the following command:
+- **Monorepo**: Turborepo + Bun workspaces
+- **Backend**: Express 5, Prisma 8 (PostgreSQL), BullMQ (Redis)
+- **Frontend**: React 19, TanStack Query, Tailwind CSS, Radix UI
+- **Storage**: AWS S3
 
-```sh
-npx create-turbo@latest
+## Project Structure
+
+```
+turboHiggsfieldAI/
+├── apps/
+│   ├── backend/       # Express API server
+│   └── frontend/      # React SPA
+└── packages/
+    └── config/        # Shared config (credit costs, etc.)
 ```
 
-## What's inside?
+## Prerequisites
 
-This Turborepo includes the following packages/apps:
+- [Bun](https://bun.sh) >= 1.3.13
+- PostgreSQL database
+- Redis (optional, for background job queues)
 
-### Apps and Packages
+## Setup
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `@next/eslint-plugin-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### 1. Install dependencies
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+bun install
 ```
 
-Without global `turbo`, use your package manager:
+### 2. Configure environment
 
-```sh
-cd my-turborepo
-npx turbo build
-bun exec turbo build
-bun exec turbo build
+```bash
+cp apps/backend/.env.example apps/backend/.env
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Edit `apps/backend/.env` with your values:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+| Variable | Description |
+|---|---|
+| `DATABASE_URL_UNPOOLED` | PostgreSQL connection string |
+| `JWT_SECRET` | Access token signing secret |
+| `JWT_REFRESH_SECRET` | Refresh token signing secret |
+| `OPENAI_API_KEY` | OpenAI API key (content moderation) |
+| `GOOGLE_GENAI_API_KEY` | Google Gemini API key (avatar generation) |
+| `OPENROUTER_API_KEY` | OpenRouter API key (video generation) |
+| `AWS_ACCESS_KEY_ID` | AWS access key |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key |
+| `AWS_REGION` | AWS region |
+| `AWS_S3_BUCKET` | S3 bucket name |
+| `REDIS_URL` | Redis connection URL |
+| `FRONTEND_URL` | Frontend origin for CORS |
 
-```sh
-turbo build --filter=docs
+### 3. Setup database
+
+```bash
+cd apps/backend
+bunx prisma db push
 ```
 
-Without global `turbo`:
+## Running
 
-```sh
-npx turbo build --filter=docs
-bun exec turbo build --filter=docs
-bun exec turbo build --filter=docs
+### Both apps (from root)
+
+```bash
+bun run dev
 ```
 
-### Develop
+### Individual apps
 
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
+**Backend** (port 3000):
+```bash
+cd apps/backend
+bun run dev
 ```
 
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-bun exec turbo dev
-bun exec turbo dev
+**Frontend** (port 5173):
+```bash
+cd apps/frontend
+PORT=5173 bun run dev
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## API Endpoints
 
-```sh
-turbo dev --filter=web
-```
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/v1/signup` | No | Create account |
+| POST | `/api/v1/signin` | No | Sign in |
+| POST | `/api/v1/refresh` | No | Refresh access token |
+| GET | `/api/v1/me` | Yes | Current user + credit balance |
+| POST | `/api/v1/avatar` | Yes | Create avatar |
+| GET | `/api/v1/avatars` | Yes | List avatars |
+| GET | `/api/v1/avatar/:id` | Yes | Get avatar details |
+| POST | `/api/v1/video` | Yes | Create video |
+| GET | `/api/v1/videos` | Yes | List videos |
+| GET | `/api/v1/video/:id` | Yes | Get video details |
 
-Without global `turbo`:
+## Credits System
 
-```sh
-npx turbo dev --filter=web
-bun exec turbo dev --filter=web
-bun exec turbo dev --filter=web
-```
+- Sign up: **50 credits**
+- Avatar generation: **10 credits**
+- Video generation: **35 credits**
 
-### Remote Caching
+## License
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-bun exec turbo login
-bun exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-bun exec turbo link
-bun exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+MIT

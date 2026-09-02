@@ -20,6 +20,14 @@
       "model": "AvatarVideoReference",
       "namespace": "public"
     },
+    "creditLedgerEntry": {
+      "model": "CreditLedgerEntry",
+      "namespace": "public"
+    },
+    "session": {
+      "model": "Session",
+      "namespace": "public"
+    },
     "user": {
       "model": "User",
       "namespace": "public"
@@ -42,6 +50,23 @@
               }
             ]
           },
+          "AvatarStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "Pending",
+                "value": "Pending"
+              },
+              {
+                "name": "Done",
+                "value": "Done"
+              },
+              {
+                "name": "Error",
+                "value": "Error"
+              }
+            ]
+          },
           "AvatarVideoStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -58,11 +83,31 @@
                 "value": "Error"
               }
             ]
+          },
+          "Role": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "USER",
+                "value": "USER"
+              },
+              {
+                "name": "ADMIN",
+                "value": "ADMIN"
+              }
+            ]
           }
         },
         "models": {
           "Avatar": {
             "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -75,6 +120,19 @@
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "AvatarStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "userId": {
@@ -134,11 +192,17 @@
             },
             "storage": {
               "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
                 "id": {
                   "column": "id"
                 },
                 "name": {
                   "column": "name"
+                },
+                "status": {
+                  "column": "status"
                 },
                 "userId": {
                   "column": "userId"
@@ -154,6 +218,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
                   "kind": "scalar"
                 }
               },
@@ -207,6 +278,9 @@
                 "avatarId": {
                   "column": "avatarId"
                 },
+                "createdAt": {
+                  "column": "createdAt"
+                },
                 "id": {
                   "column": "id"
                 },
@@ -223,6 +297,20 @@
           },
           "AvatarVideo": {
             "fields": {
+              "costCredits": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
               "duration": {
                 "nullable": false,
                 "type": {
@@ -231,6 +319,13 @@
                 }
               },
               "endFrame": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "errorMessage": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
@@ -251,8 +346,22 @@
                   "kind": "scalar"
                 }
               },
+              "moderationFlag": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "prompt": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "providerJobId": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -280,6 +389,13 @@
               },
               "userId": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "videoUrl": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -327,11 +443,20 @@
             },
             "storage": {
               "fields": {
+                "costCredits": {
+                  "column": "costCredits"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
                 "duration": {
                   "column": "duration"
                 },
                 "endFrame": {
                   "column": "endFrame"
+                },
+                "errorMessage": {
+                  "column": "errorMessage"
                 },
                 "height": {
                   "column": "height"
@@ -339,8 +464,14 @@
                 "id": {
                   "column": "id"
                 },
+                "moderationFlag": {
+                  "column": "moderationFlag"
+                },
                 "prompt": {
                   "column": "prompt"
+                },
+                "providerJobId": {
+                  "column": "providerJobId"
                 },
                 "startFrame": {
                   "column": "startFrame"
@@ -350,6 +481,9 @@
                 },
                 "userId": {
                   "column": "userId"
+                },
+                "videoUrl": {
+                  "column": "videoUrl"
                 },
                 "width": {
                   "column": "width"
@@ -431,8 +565,213 @@
               "table": "avatarVideoReference"
             }
           },
+          "CreditLedgerEntry": {
+            "fields": {
+              "amount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "idempotencyKey": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reason": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "refId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "amount": {
+                  "column": "amount"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "idempotencyKey": {
+                  "column": "idempotencyKey"
+                },
+                "reason": {
+                  "column": "reason"
+                },
+                "refId": {
+                  "column": "refId"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "creditLedgerEntry"
+            }
+          },
+          "Session": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "refreshTokenHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "revokedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "refreshTokenHash": {
+                  "column": "refreshTokenHash"
+                },
+                "revokedAt": {
+                  "column": "revokedAt"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "session"
+            }
+          },
           "User": {
             "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "emailVerifiedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -445,6 +784,19 @@
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
+                }
+              },
+              "role": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Role",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "username": {
@@ -485,15 +837,57 @@
                   "model": "Avatar",
                   "namespace": "public"
                 }
+              },
+              "creditLedgerEntries": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "CreditLedgerEntry",
+                  "namespace": "public"
+                }
+              },
+              "sessions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "Session",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
               "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "emailVerifiedAt": {
+                  "column": "emailVerifiedAt"
+                },
                 "id": {
                   "column": "id"
                 },
                 "password": {
                   "column": "password"
+                },
+                "role": {
+                  "column": "role"
                 },
                 "username": {
                   "column": "username"
@@ -513,7 +907,23 @@
         "entries": {
           "table": {
             "avatar": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('Pending', 'Done', 'Error')",
+                  "name": "avatar_status_check_e5c75c8b",
+                  "prefix": "avatar_status_check"
+                }
+              ],
               "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -523,6 +933,21 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "Pending"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "AvatarStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "userId": {
                   "codecId": "pg/text@1",
@@ -578,6 +1003,15 @@
                 "avatarId": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "id": {
@@ -647,12 +1081,35 @@
                 }
               ],
               "columns": {
+                "costCredits": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 35
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
                 "duration": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
                   "nullable": false
                 },
                 "endFrame": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "errorMessage": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": true
@@ -667,10 +1124,24 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "moderationFlag": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "NONE"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "prompt": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "providerJobId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "startFrame": {
                   "codecId": "pg/text@1",
@@ -679,6 +1150,10 @@
                 },
                 "status": {
                   "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "Pending"
+                  },
                   "nativeType": "text",
                   "nullable": false,
                   "valueSet": {
@@ -692,6 +1167,11 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "videoUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "width": {
                   "codecId": "pg/int4@1",
@@ -820,8 +1300,197 @@
                 }
               ]
             },
-            "user": {
+            "creditLedgerEntry": {
               "columns": {
+                "amount": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "idempotencyKey": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "reason": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "refId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "creditLedgerEntry"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "creditLedgerEntry_userId_idx_a489d58a",
+                  "prefix": "creditLedgerEntry_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "idempotencyKey"
+                  ]
+                }
+              ]
+            },
+            "session": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "refreshTokenHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "revokedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "userId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "session"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "userId"
+                  ],
+                  "name": "session_userId_idx_a489d58a",
+                  "prefix": "session_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "refreshTokenHash"
+                  ]
+                }
+              ]
+            },
+            "user": {
+              "checks": [
+                {
+                  "expression": "\"role\" IN ('USER', 'ADMIN')",
+                  "name": "user_role_check_1954e8c0",
+                  "prefix": "user_role_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "emailVerifiedAt": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -831,6 +1500,21 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "USER"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Role",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "username": {
                   "codecId": "pg/text@1",
@@ -850,6 +1534,11 @@
                   "columns": [
                     "username"
                   ]
+                },
+                {
+                  "columns": [
+                    "email"
+                  ]
                 }
               ]
             }
@@ -862,12 +1551,27 @@
                 "Model"
               ]
             },
+            "AvatarStatus": {
+              "kind": "valueSet",
+              "values": [
+                "Pending",
+                "Done",
+                "Error"
+              ]
+            },
             "AvatarVideoStatus": {
               "kind": "valueSet",
               "values": [
                 "Pending",
                 "Done",
                 "Error"
+              ]
+            },
+            "Role": {
+              "kind": "valueSet",
+              "values": [
+                "USER",
+                "ADMIN"
               ]
             }
           }
@@ -876,10 +1580,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "302cc6ae930b8bff7a54952fba43aa1a609aa737a5eec8e837543644372d02b8"
+    "storageHash": "728adc430a5327fe4076e0836b32fb488f993004d92f5dcd90372d7e79685306"
   },
   "execution": {
-    "executionHash": "19555b459ce2f83db47f00d77625985da81d58a5b5d6433cd14a71dab249c675",
+    "executionHash": "ca6cad7e837d27fe0cb68bad3f9169d1b946895dfc63164ee6db1b5f31456df4",
     "mutations": {
       "defaults": [
         {
@@ -924,6 +1628,28 @@
             "column": "id",
             "namespace": "public",
             "table": "avatarVideoReference"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "creditLedgerEntry"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "session"
           }
         },
         {

@@ -9,18 +9,28 @@
     "contract:emit": "prisma contract emit"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.750.0",
+    "@js-temporal/polyfill": "^0.5.1",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "@prisma/orm-postgres": "^8.0.0-rc.7",
+    "@repo/config": "*",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.8",
+    "argon2": "^0.41.1",
+    "axios": "^1.8.1",
+    "bullmq": "^5.41.6",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "elysia": "latest",
     "express": "^5.2.1",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "ioredis": "^5.5.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.23.0",
     "uuidv4": "^6.2.13",
-    "zod": "^4.4.3"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@prisma/cli-engine": "0.2.3",
@@ -29,5 +39,5 @@
     "bun-types": "latest",
     "prisma": "^8.0.0-rc.10"
   },
-  "module": "src/index.js"
+  "module": "src/index.ts"
 }

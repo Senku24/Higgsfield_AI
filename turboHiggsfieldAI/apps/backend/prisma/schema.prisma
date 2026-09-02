@@ -1,26 +1,69 @@
 // use prisma-next
 
+enum Role {
+    USER
+    ADMIN
+}
+
 model User {
-    id              String      @id     @default(uuid())
-    username        String      @unique
-    password        String
-    avatars         Avatar[]
-    avatarVideos    AvatarVideo[]
+    id                  String              @id @default(uuid())
+    username            String              @unique
+    email               String?             @unique
+    emailVerifiedAt     DateTime?
+    password            String
+    role                Role                @default(USER)
+    avatars             Avatar[]
+    avatarVideos        AvatarVideo[]
+    sessions            Session[]
+    creditLedgerEntries CreditLedgerEntry[]
+    createdAt           DateTime            @default(now())
 }
+
+model Session {
+    id               String    @id @default(uuid())
+    userId           String
+    user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refreshTokenHash String    @unique
+    expiresAt        DateTime
+    revokedAt        DateTime?
+    createdAt        DateTime  @default(now())
+}
+
+model CreditLedgerEntry {
+    id             String   @id @default(uuid())
+    userId         String
+    user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    amount         Int
+    reason         String
+    refId          String?
+    idempotencyKey String   @unique
+    createdAt      DateTime @default(now())
+}
+
+enum AvatarStatus {
+    Pending
+    Done
+    Error
+}
+
 model Avatar {
-    id                          String      @id     @default(uuid())
-    userId                      String
-    name                        String
-    avatarImages                AvatarImage[]
-    avatarVideoReferences       AvatarVideoReference[]
-    user                        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id                    String                 @id @default(uuid())
+    userId                String
+    name                  String
+    status                AvatarStatus           @default(Pending)
+    avatarImages          AvatarImage[]
+    avatarVideoReferences AvatarVideoReference[]
+    user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt             DateTime               @default(now())
 }
+
 model AvatarImage {
-    id          String      @id     @default(uuid())
-    avatarId    String
-    type        AvatarImageType
-    url         String
-    avatar      Avatar      @relation(fields: [avatarId], references: [id], onDelete: Cascade)
+    id        String          @id @default(uuid())
+    avatarId  String
+    type      AvatarImageType
+    url       String
+    avatar    Avatar          @relation(fields: [avatarId], references: [id], onDelete: Cascade)
+    createdAt DateTime        @default(now())
 }
 
 enum AvatarImageType {
@@ -29,31 +72,38 @@ enum AvatarImageType {
 }
 
 model AvatarVideo {
-    id                          String      @id     @default(uuid())
-    userId                      String
-    prompt                      String
-    startFrame                  String?
-    endFrame                    String?
-    duration                    Int
-    width                       Int
-    height                      Int
-    status                      AvatarVideoStatus
-    avatarVideoReferences       AvatarVideoReference[]
-    user                        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id                    String                 @id @default(uuid())
+    userId                String
+    prompt                String
+    startFrame            String?
+    endFrame              String?
+    duration              Int
+    width                 Int
+    height                Int
+    status                AvatarVideoStatus      @default(Pending)
+    costCredits           Int                    @default(35)
+    providerJobId         String?
+    errorMessage          String?
+    moderationFlag        String                 @default("NONE")
+    videoUrl              String?
+    avatarVideoReferences AvatarVideoReference[]
+    user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt             DateTime               @default(now())
 }
 
-enum AvatarVideoStatus{
+enum AvatarVideoStatus {
     Pending
     Done
     Error
 }
 
 model AvatarVideoReference {
-    id                  String           @id     @default(uuid())
-    avatarVideoId       String
-    avatarId            String 
-    avatar              Avatar           @relation(fields: [avatarId], references: [id])
-    avatarVideo         AvatarVideo      @relation(fields: [avatarVideoId], references: [id], onDelete: Cascade)
+    id            String      @id @default(uuid())
+    avatarVideoId String
+    avatarId      String
+    avatar        Avatar      @relation(fields: [avatarId], references: [id])
+    avatarVideo   AvatarVideo @relation(fields: [avatarVideoId], references: [id], onDelete: Cascade)
 
     @@unique([avatarVideoId, avatarId])
 }
+
