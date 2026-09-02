@@ -109,6 +109,3 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 - Avatar generation: **10 credits**
 - Video generation: **35 credits**
 
-## License
-
-MIT
